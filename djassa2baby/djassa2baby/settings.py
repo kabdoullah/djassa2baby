@@ -29,7 +29,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['127.0.0.1','djassa2baby.pythonanywhere.com']
 CORS_ALLOWED_ORIGINS = [
     "https://djassa2baby.pythonanywhere.com",
-    "http://localhost:3000",
+    "http://localhost:4000",
 ]
 
 # Application definition
