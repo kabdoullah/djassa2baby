@@ -27,7 +27,10 @@ SECRET_KEY = 'django-insecure-zw(^p4_0wup_5x92%4)5(1yh71@1p&64$4idnf0@(-t@j^!bx2
 DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1','djassa2baby.pythonanywhere.com']
-
+CORS_ALLOWED_ORIGINS = [
+    "https://djassa2baby.pythonanywhere.com",
+    "http://localhost:3000",
+]
 
 # Application definition
 
@@ -159,9 +162,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'static'
 
-MEDIA_ROOT = 'media/'
 MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
