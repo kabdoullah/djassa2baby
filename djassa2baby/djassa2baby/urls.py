@@ -43,6 +43,10 @@ urlpatterns = [
     path('redoc/', schema_view.with_ui('redoc',
                                        cache_timeout=0), name='schema-redoc'),
     path('api/', include('core.urls.role')),
+    path('api/', include('core.urls.coupon')),
     path('api/users/', include('users.urls')),
-    path('api/shop/', include('shop.urls.product')),
+    path('api/', include('shop.urls.product')),
+    path('api/', include('shop.urls.shop')),
+    path('api/', include('shop.urls.order')),
+    path('api/', include('shop.urls.subscription')),
 ]

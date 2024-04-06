@@ -1,5 +1,5 @@
 from django.contrib import admin
-from shop.models.product import Product, Category
+from shop.models.product import Product, Category, ProductReview
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -9,8 +9,14 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['id', 'label', 'description', 'is_active']
-    search_fields = ['label']
+    list_display = ['id', 'name', 'description', 'is_active']
+    search_fields = ['name']
     list_filter = ['is_active']
+    
+@admin.register(ProductReview)
+class ProductReviewAdmin(admin.ModelAdmin):
+    list_display = ['id', 'product', 'user', 'comment', 'rating']
+    search_fields = ['product__name', 'user__email']
+    list_filter = ['product', 'user', 'rating']
 
 

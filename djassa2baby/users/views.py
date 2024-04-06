@@ -2,14 +2,14 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.generics import CreateAPIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import CustomUserSerializer
+from .serializers import UserSerializer
 
 
 class CreateUserView(CreateAPIView):
-    serializer_class = CustomUserSerializer
+    serializer_class = UserSerializer
 
     def post(self, request):
-        serializer = CustomUserSerializer(data=request.data)
+        serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
             refresh = RefreshToken.for_user(user)
