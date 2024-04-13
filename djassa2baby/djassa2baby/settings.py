@@ -27,9 +27,32 @@ SECRET_KEY = 'django-insecure-zw(^p4_0wup_5x92%4)5(1yh71@1p&64$4idnf0@(-t@j^!bx2
 DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1','djassa2baby.pythonanywhere.com']
+
 CORS_ALLOWED_ORIGINS = [
     "https://djassa2baby.pythonanywhere.com",
-    "http://localhost:4000",
+    "http://localhost:4200",
+]
+
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
+
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
 ]
 
 # Application definition
@@ -41,6 +64,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'users',
     'core',
     'shop',
@@ -58,6 +82,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
 ]
 
 ROOT_URLCONF = 'djassa2baby.urls'
