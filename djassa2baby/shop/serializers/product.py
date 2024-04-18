@@ -17,4 +17,4 @@ class CategorySerializer(serializers.ModelSerializer):
 class ProductReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductReview
-        fields = ['id', 'product', 'user', 'comment', 'rating']
+        fields = '__all__'
