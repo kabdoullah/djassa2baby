@@ -1,21 +1,35 @@
-name: Deploy to PythonAnywhere
+name: Déployer Django sur PythonAnywhere
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
-  deploy:
+  déployer:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Extraire le code
+        uses: actions/checkout@v3
 
-      - name: Install SSH client
-        run: sudo apt-get install openssh-client
+      - name: Installer les dépendances
+        run: pip install -r requirements.txt
 
-      - name: Deploy to PythonAnywhere
+      - name: Collecter les statiques
+        run: python manage.py collectstatic --noinput
+
+      - name: Générer les migrations
+        run: python manage.py makemigrations
+
+      - name: Appliquer les migrations
+        run: python manage.py migrate
+
+      - name: Configurer SSH
+        run: ssh-keyscan -t rsa git@api.pythonanywhere.com >> ~/.ssh/known_hosts
+
+      - name: Déployer le code
         run: |
-          ssh user@djassa2baby.pythonanywhere.com "cd /home/djassa2baby/djassa2baby && git pull"
+          git push -f git@api.pythonanywhere.com:djassa2baby/djassa2baby.git main
+          source .env
+          pythonanywhere --ctl djassa2baby update
+
