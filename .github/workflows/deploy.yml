@@ -12,18 +12,6 @@ jobs:
       - name: Extraire le code
         uses: actions/checkout@v3
 
-      - name: Installer les dépendances
-        run: pip install -r requirements.txt
-
-      - name: Collecter les statiques
-        run: python manage.py collectstatic --noinput
-
-      - name: Générer les migrations
-        run: python manage.py makemigrations
-
-      - name: Appliquer les migrations
-        run: python manage.py migrate
-
       - name: Configurer SSH
         run: ssh-keyscan -t rsa git@api.pythonanywhere.com >> ~/.ssh/known_hosts
 
