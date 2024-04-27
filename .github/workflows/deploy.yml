@@ -14,7 +14,7 @@ jobs:
     - name: Deploy to PythonAnywhere
       run: |
         pip install pythonanywhere
-        pa_autoconfigure_django.py https://github.com/kabdoullah/djassa2baby.git --nuke ${{ secrets.PYTHONANYWHERE_API_TOKEN }} --branch=main --domain=djassa2baby.pythonanywhere.com --python=3.10
+        pa_autoconfigure_django.py https://github.com/kabdoullah/djassa2baby.git --branch=main --domain=djassa2baby.pythonanywhere.com --python=3.10
       env:
         PYTHONANYWHERE_API_TOKEN: ${{ secrets.PYTHONANYWHERE_API_TOKEN }}
        
