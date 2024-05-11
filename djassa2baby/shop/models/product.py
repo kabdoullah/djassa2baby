@@ -1,6 +1,8 @@
 import uuid
 from django.db import models
 from users.models import User
+from shop.models.shop import Shop
+from django.utils.text import slugify
 
 
 class Category(models.Model):
@@ -10,6 +12,11 @@ class Category(models.Model):
     image = models.ImageField(
         upload_to='category_images/', null=True, blank=True)
     is_active = models.BooleanField(default=True)
+    slug = models.SlugField(unique=True, max_length=255, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -21,6 +28,7 @@ class Product(models.Model):
     description = models.TextField(null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    shop = models.ForeignKey(Shop, on_delete=models.CASCADE, null=True, blank=True)
     reduced_price = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True)
     image1 = models.ImageField(
@@ -36,13 +44,18 @@ class Product(models.Model):
     quantity_in_stock = models.IntegerField()
     instock = models.BooleanField(default=True)
     added_at = models.DateTimeField(auto_now_add=True)
-    # Champ pour stocker la note moyenne
     average_rating = models.DecimalField(
         max_digits=3, decimal_places=2, default=0.00)
     total_ratings = models.PositiveIntegerField(default=0)
+    slug = models.SlugField(unique=True, max_length=255, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
+
 
 class ProductReview(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

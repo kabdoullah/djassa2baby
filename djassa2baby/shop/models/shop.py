@@ -1,6 +1,5 @@
 import uuid
 from django.db import models
-from django.utils.translation import gettext_lazy as _
 from users.models import User
 from shop.models.subscription import Subscription
 
@@ -23,10 +22,11 @@ class Shop(models.Model):
     can_evaluate = models.BooleanField(default=True)
     date_added = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    slug = models.SlugField(unique=True, max_length=255, null=True, blank=True)
 
-    class Meta:
-        verbose_name = _('Shop')
-        verbose_name_plural = _('Shops')
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
