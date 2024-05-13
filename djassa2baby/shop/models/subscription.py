@@ -8,7 +8,7 @@ class Subscription(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    description = models.TextField()
+    description = models.TextField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -20,9 +20,6 @@ class SubscriptionHistory(models.Model):
     shop = models.ForeignKey('shop.Shop', on_delete=models.CASCADE)
     payment_date = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        verbose_name = _('Subscription History')
-        verbose_name_plural = _('Subscription Histories')
 
     def __str__(self):
         return f'{self.user} - {self.subscription} - {self.payment_date}'

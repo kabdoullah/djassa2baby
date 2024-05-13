@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from users.models import User
 from shop.models.subscription import Subscription
+from django.utils.text import slugify
 
 
 class Shop(models.Model):
@@ -11,7 +12,7 @@ class Shop(models.Model):
     email = models.EmailField()
     phone_number_1 = models.CharField(max_length=20)
     phone_number_2 = models.CharField(max_length=20, blank=True, null=True)
-    description = models.TextField()
+    description = models.TextField(blank=True, null=True)
     location = models.CharField(max_length=255)
     subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
     facebook_link = models.URLField(blank=True, null=True)
@@ -35,5 +36,5 @@ class ShopReview(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    comment = models.TextField()
+    comment = models.TextField(blank=True, null=True)
     rating = models.IntegerField()

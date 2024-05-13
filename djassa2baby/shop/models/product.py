@@ -61,5 +61,5 @@ class ProductReview(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    comment = models.TextField()
+    comment = models.TextField(blank=True, null=True)
     rating = models.IntegerField()
