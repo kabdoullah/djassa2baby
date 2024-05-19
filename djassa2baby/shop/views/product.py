@@ -49,24 +49,47 @@ class ProductReviewViewSet(viewsets.ModelViewSet):
 
 
 class SimilarProductsViewSet(viewsets.ViewSet):
+    """
+    A simple ViewSet for listing similar products.
+
+    This ViewSet provides an endpoint to retrieve products that are similar to
+    a given product or belong to a specific category. The similarity criteria
+    can be customized as needed.
+    """
+
     serializer_class = ProductResponseSerializer
 
     def list(self, request):
+        """
+        List similar products based on category or product.
+
+        This method retrieves a list of products that are similar to the product specified
+        by the `product_id` query parameter, or products that belong to the same category
+        as specified by the `category_id` query parameter.
+
+        Query Parameters:
+        - category_id: The ID of the category to find similar products.
+        - product_id: The ID of the product to find similar products.
+
+        Returns:
+        - A list of similar products serialized using `ProductResponseSerializer`.
+        """
         category_id = request.query_params.get('category_id')
         product_id = request.query_params.get('product_id')
 
         if category_id:
-            # Récupérer les produits de la même catégorie (à l'exclusion du produit lui-même)
+            # Retrieve products from the same category, excluding the specified product
             products = Product.objects.filter(
                 category_id=category_id).exclude(id=product_id)[:5]
         elif product_id:
-            # Récupérer les produits similaires (à adapter selon vos critères)
+            # Retrieve similar products based on the specified product's category
             product = Product.objects.get(id=product_id)
             products = Product.objects.filter(
                 category=product.category).exclude(id=product_id)[:5]
         else:
-            # Ajustez pour d'autres critères de similarité
+            # Default to retrieving the first 5 products (this can be customized)
             products = Product.objects.all()[:5]
 
+        # Serialize the list of similar products
         serializer = self.serializer_class(products, many=True)
         return Response(serializer.data)

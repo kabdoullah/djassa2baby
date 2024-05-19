@@ -5,6 +5,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import UserSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from shop.serializers.shop import ShopSerializer
+from shop.models.shop import Shop
 
 
 class CreateUserView(CreateAPIView):
@@ -41,9 +42,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
        
         if user.role and user.role.label == 'vendeur':
-            shop = user.shop  
+            shop = Shop.objects.filter(user=user).first()
             if shop:
                 response_data['shop'] = ShopSerializer(shop).data
-
         
         return Response(response_data, status=status.HTTP_200_OK)
