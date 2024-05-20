@@ -1,6 +1,7 @@
 from rest_framework import viewsets
 from django.db.models import Q
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from rest_framework import status
 from shop.permissions.permission import UnauthenticatedReadonly
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -17,13 +18,26 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = Product.objects.all()
-        serializer = ProductResponseSerializer(queryset, many=True)
+        serializer = ProductResponseSerializer(
+            queryset, many=True, context=self.get_serializer_context())
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = ProductResponseSerializer(instance)
+        serializer = ProductResponseSerializer(
+            instance, context=self.get_serializer_context())
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['GET'], url_path='category/(?P<category_slug>[^/.]+)', url_name='filter_by_category')
+    def filter_by_category(self, request, category_slug=None):
+        try:
+            category = Category.objects.get(slug=category_slug)
+            products = Product.objects.filter(category=category)
+            serializer = ProductResponseSerializer(
+                products, many=True, context=self.get_serializer_context())
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Category.DoesNotExist:
+            return Response({'error': 'Category not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
