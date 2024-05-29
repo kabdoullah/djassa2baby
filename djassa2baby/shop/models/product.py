@@ -26,9 +26,9 @@ class Product(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    shop = models.ForeignKey(Shop, on_delete=models.CASCADE, null=True, blank=True)
+    shop = models.ForeignKey(Shop, on_delete=models.CASCADE, null=True, blank=True, related_name='products')
     reduced_price = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True)
     image1 = models.ImageField(
@@ -63,3 +63,4 @@ class ProductReview(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     comment = models.TextField(blank=True, null=True)
     rating = models.IntegerField()
+    added_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
