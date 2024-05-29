@@ -11,4 +11,4 @@ class ShopSerializer(serializers.ModelSerializer):
 class ShopReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShopReview
-        fields = ['id', 'shop', 'user', 'comment', 'rating']
+        fields = '__all__'

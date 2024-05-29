@@ -4,8 +4,8 @@ from shop.views.shop import ShopViewSet, ShopReviewViewSet
 
 
 router = DefaultRouter()
-router.register(r'shops', ShopViewSet)
-router.register(r'shop-reviews', ShopReviewViewSet)
+router.register(r'shops', ShopViewSet, basename='shop')
+router.register(r'shop-reviews', ShopReviewViewSet, basename='shop-review')
 
 urlpatterns = [
     path('', include(router.urls)),

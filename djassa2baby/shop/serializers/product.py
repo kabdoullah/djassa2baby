@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from shop.models.product import Product, Category, ProductReview
 from shop.serializers.shop import ShopSerializer
+from users.serializers import UserSerializer
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -25,6 +26,7 @@ class ProductResponseSerializer(serializers.ModelSerializer):
 
 
 class ProductReviewSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
     class Meta:
         model = ProductReview
         fields = '__all__'

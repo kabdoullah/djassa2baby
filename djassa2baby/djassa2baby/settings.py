@@ -31,7 +31,7 @@ ALLOWED_HOSTS = ['127.0.0.1','djassa2baby.pythonanywhere.com']
 CORS_ALLOWED_ORIGINS = [
     "https://djassa2baby.pythonanywhere.com",
     "http://localhost:4200",
-    "https://djassa2baby-275ef.web.app/"
+    "https://djassa2baby-275ef.web.app"
 ]
 
 CORS_ALLOW_HEADERS = [
