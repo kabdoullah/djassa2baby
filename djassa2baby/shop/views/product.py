@@ -38,6 +38,13 @@ class ProductViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Category.DoesNotExist:
             return Response({'error': 'Category not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    @action(detail=True, methods=['GET'], url_path='reviews', url_name='product_reviews')
+    def list_reviews(self, request, slug=None):
+        product = self.get_object()
+        reviews = product.reviews.all()
+        serializer = ProductReviewSerializer(reviews, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
