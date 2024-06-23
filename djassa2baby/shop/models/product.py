@@ -26,9 +26,11 @@ class Product(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
+    category = models.ForeignKey(
+        Category, on_delete=models.CASCADE, related_name='products')
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    shop = models.ForeignKey(Shop, on_delete=models.CASCADE, null=True, blank=True, related_name='products')
+    shop = models.ForeignKey(
+        Shop, on_delete=models.CASCADE, null=True, blank=True, related_name='products')
     reduced_price = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True)
     image1 = models.ImageField(
@@ -41,7 +43,7 @@ class Product(models.Model):
         upload_to='product_images/', null=True, blank=True)
     image5 = models.ImageField(
         upload_to='product_images/', null=True, blank=True)
-    quantity_in_stock = models.IntegerField()
+    quantity_in_stock = models.IntegerField(default=0)
     instock = models.BooleanField(default=True)
     added_at = models.DateTimeField(auto_now_add=True)
     average_rating = models.DecimalField(
@@ -57,10 +59,15 @@ class Product(models.Model):
         return self.name
 
 
+    def is_available(self, quantity=1):
+        return self.quantity_in_stock >= quantity
+
+
 class ProductReview(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name='reviews')
     comment = models.TextField(blank=True, null=True)
     rating = models.IntegerField()
     added_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
