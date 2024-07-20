@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from django.db.models import Q
+from django.db.models import Count
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import status
@@ -45,6 +45,46 @@ class ProductViewSet(viewsets.ModelViewSet):
         reviews = product.reviews.all()
         serializer = ProductReviewSerializer(reviews, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=['get'], url_path='search')
+    def search(self, request):
+        query = request.query_params.get('q', None)
+        if query:
+            products = Product.objects.filter(name__icontains=query)
+            serializer = self.get_serializer(products, many=True)
+            return Response(serializer.data)
+        return Response({'error': 'No query provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['get'], url_path='category/(?P<category_id>[^/.]+)')
+    def search_by_category(self, request, category_id=None):
+        products = Product.objects.filter(category_id=category_id)
+        serializer = self.get_serializer(products, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'], url_path='shop/(?P<shop_id>[^/.]+)')
+    def search_by_shop(self, request, shop_id=None):
+        products = Product.objects.filter(shop_id=shop_id)
+        serializer = self.get_serializer(products, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'], url_path='shop/(?P<shop_id>[^/.]+)/category/(?P<category_id>[^/.]+)')
+    def search_by_shop_and_category(self, request, shop_id=None, category_id=None):
+        products = Product.objects.filter(shop_id=shop_id, category_id=category_id)
+        serializer = self.get_serializer(products, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'], url_path='most-ordered')
+    def most_ordered(self, request):
+        products = Product.objects.annotate(order_count=Count('orderitem')).order_by('-order_count')[:10]
+        serializer = self.get_serializer(products, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['get'], url_path='similar')
+    def similar_products(self, request, pk=None):
+        product = get_object_or_404(Product, pk=pk)
+        similar_products = Product.objects.filter(category=product.category).exclude(pk=product.pk)
+        serializer = self.get_serializer(similar_products, many=True)
+        return Response(serializer.data)
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -69,48 +109,3 @@ class ProductReviewViewSet(viewsets.ModelViewSet):
     permission_classes = [UnauthenticatedReadonly]
 
 
-class SimilarProductsViewSet(viewsets.ViewSet):
-    """
-    A simple ViewSet for listing similar products.
-
-    This ViewSet provides an endpoint to retrieve products that are similar to
-    a given product or belong to a specific category. The similarity criteria
-    can be customized as needed.
-    """
-
-    serializer_class = ProductResponseSerializer
-
-    def list(self, request):
-        """
-        List similar products based on category or product.
-
-        This method retrieves a list of products that are similar to the product specified
-        by the `product_id` query parameter, or products that belong to the same category
-        as specified by the `category_id` query parameter.
-
-        Query Parameters:
-        - category_id: The ID of the category to find similar products.
-        - product_id: The ID of the product to find similar products.
-
-        Returns:
-        - A list of similar products serialized using `ProductResponseSerializer`.
-        """
-        category_id = request.query_params.get('category_id')
-        product_id = request.query_params.get('product_id')
-
-        if category_id:
-            # Retrieve products from the same category, excluding the specified product
-            products = Product.objects.filter(
-                category_id=category_id).exclude(id=product_id)[:5]
-        elif product_id:
-            # Retrieve similar products based on the specified product's category
-            product = Product.objects.get(id=product_id)
-            products = Product.objects.filter(
-                category=product.category).exclude(id=product_id)[:5]
-        else:
-            # Default to retrieving the first 5 products (this can be customized)
-            products = Product.objects.all()[:5]
-
-        # Serialize the list of similar products
-        serializer = self.serializer_class(products, many=True)
-        return Response(serializer.data)

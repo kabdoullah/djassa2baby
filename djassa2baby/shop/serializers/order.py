@@ -1,6 +1,13 @@
 from rest_framework import serializers
 from shop.models.order import Order, OrderItem
+from users.models import User
 
+
+
+class ClientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'phone_number']
 class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
@@ -9,6 +16,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, write_only=True)
     total = serializers.SerializerMethodField()
+    client = ClientSerializer(read_only=True)
 
     class Meta:
         model = Order

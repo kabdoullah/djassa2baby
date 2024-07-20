@@ -7,10 +7,10 @@ from users.models import User
 
 class Order(models.Model):
     STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('confirmed', 'Confirmed'),
-        ('canceled', 'Canceled'),
-        ('delivered', 'Delivered'),
+        ('pending', 'En attente'),
+        ('confirmed', 'Confirmée'),
+        ('canceled', 'Annulée'),
+        ('delivered', 'Livrée'),
     ]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     client = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -26,6 +26,6 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
     product = models.ForeignKey('Product', on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=20, decimal_places=2)
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='orders', null=True)
     
