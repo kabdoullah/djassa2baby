@@ -19,6 +19,10 @@ class Order(models.Model):
     order_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(
         max_length=30, choices=STATUS_CHOICES, default='pending')
+    full_name = models.CharField(max_length=255, null=True, blank=True)
+    address = models.CharField(max_length=255, null=True, blank=True)
+    phone_number = models.CharField(max_length=15, null=True, blank=True)
+    note = models.TextField(null=True, blank=True)
 
 
 

@@ -30,3 +30,9 @@ class ProductReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductReview
         fields = '__all__'
+
+class ProductReviewCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductReview
+        fields = '__all__'
+        

@@ -6,7 +6,12 @@ from rest_framework import status
 from shop.permissions.permission import UnauthenticatedReadonly
 from rest_framework.parsers import MultiPartParser, FormParser
 from shop.models.product import Product, Category, ProductReview
-from shop.serializers.product import ProductSerializer, CategorySerializer, ProductReviewSerializer, ProductResponseSerializer
+from shop.serializers.product import (ProductSerializer,
+                                      CategorySerializer,
+                                      ProductReviewSerializer,
+                                      ProductResponseSerializer,
+                                      ProductReviewCreateSerializer
+                                      )
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -38,14 +43,14 @@ class ProductViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Category.DoesNotExist:
             return Response({'error': 'Category not found'}, status=status.HTTP_404_NOT_FOUND)
-    
+
     @action(detail=True, methods=['GET'], url_path='reviews', url_name='product_reviews')
     def list_reviews(self, request, slug=None):
         product = self.get_object()
         reviews = product.reviews.all()
         serializer = ProductReviewSerializer(reviews, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
     @action(detail=False, methods=['get'], url_path='search')
     def search(self, request):
         query = request.query_params.get('q', None)
@@ -69,20 +74,23 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], url_path='shop/(?P<shop_id>[^/.]+)/category/(?P<category_id>[^/.]+)')
     def search_by_shop_and_category(self, request, shop_id=None, category_id=None):
-        products = Product.objects.filter(shop_id=shop_id, category_id=category_id)
+        products = Product.objects.filter(
+            shop_id=shop_id, category_id=category_id)
         serializer = self.get_serializer(products, many=True)
         return Response(serializer.data)
 
     @action(detail=False, methods=['get'], url_path='most-ordered')
     def most_ordered(self, request):
-        products = Product.objects.annotate(order_count=Count('orderitem')).order_by('-order_count')[:10]
+        products = Product.objects.annotate(order_count=Count(
+            'orderitem')).order_by('-order_count')[:10]
         serializer = self.get_serializer(products, many=True)
         return Response(serializer.data)
-    
+
     @action(detail=True, methods=['get'], url_path='similar')
-    def similar_products(self, request, pk=None):
-        product = get_object_or_404(Product, pk=pk)
-        similar_products = Product.objects.filter(category=product.category).exclude(pk=product.pk)
+    def similar_products(self, request, slug=None):
+        product = Product.objects.get(slug=slug)
+        similar_products = Product.objects.filter(
+            category=product.category).exclude(slug=product.slug)
         serializer = self.get_serializer(similar_products, many=True)
         return Response(serializer.data)
 
@@ -105,7 +113,11 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 class ProductReviewViewSet(viewsets.ModelViewSet):
     queryset = ProductReview.objects.all()
-    serializer_class = ProductReviewSerializer
+    serializer_class = ProductReviewCreateSerializer
     permission_classes = [UnauthenticatedReadonly]
 
-
+    def list(self, request, *args, **kwargs):
+        queryset = ProductReview.objects.all()
+        serializer = ProductReviewSerializer(
+            queryset, many=True, context=self.get_serializer_context())
+        return Response(serializer.data, status=status.HTTP_200_OK)
