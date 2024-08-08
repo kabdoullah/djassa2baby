@@ -31,7 +31,7 @@ class ShopViewSet(viewsets.ModelViewSet):
     def list_products(self, request, slug=None):
         shop = self.get_object()
         products = shop.products.all()
-        serializer = ProductResponseSerializer(products, many=True)
+        serializer = ProductResponseSerializer(products, many=True, context=self.get_serializer_context())
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     @action(detail=False, methods=['GET'], url_path="products/category/(?P<category_slug>[^/.]+)", url_name="products_by_category")
@@ -39,7 +39,7 @@ class ShopViewSet(viewsets.ModelViewSet):
         try:
             category = Category.objects.get(slug=category_slug)
             products = category.products.all()
-            serializer = ProductResponseSerializer(products, many=True)
+            serializer = ProductResponseSerializer(products, many=True, context=self.get_serializer_context())
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Category.DoesNotExist:
             return Response({"error": "Category not found in this shop"}, status=status.HTTP_404_NOT_FOUND)

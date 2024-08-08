@@ -55,12 +55,3 @@ class CreateAnonymousOrderView(viewsets.ModelViewSet):
     serializer_class = AnonymousOrderSerializer
     permission_classes = [AllowAny]
     
-    def create(self, request, *args, **kwargs):
-        serializer = AnonymousOrderSeriaselizer(data=request.data)
-        if serializer.is_valid():
-            order = serializer.save()
-            for item in request.data.get('items', []):
-                product = Product.objects.get(id=item['product'])
-                OrderItem.objects.create(order=order, product=product, quantity=item['quantity'], price=product.price)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
