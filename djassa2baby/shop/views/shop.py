@@ -33,6 +33,16 @@ class ShopViewSet(viewsets.ModelViewSet):
         products = shop.products.all()
         serializer = ProductResponseSerializer(products, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'], url_path='search')
+    def search(self, request):
+        query = request.query_params.get('q', None)
+        if query:
+            shops = Shop.objects.filter(name__icontains=query)
+            serializer = self.get_serializer(shops, many=True)
+            return Response(serializer.data)
+        return Response({'error': 'No query provided'}, status=status.HTTP_400_BAD_REQUEST)
+    
     
     @action(detail=False, methods=['GET'], url_path="products/category/(?P<category_slug>[^/.]+)", url_name="products_by_category")
     def list_products_by_category(self, request, category_slug=None, slug=None):

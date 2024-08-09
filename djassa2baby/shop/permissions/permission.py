@@ -1,4 +1,4 @@
-from rest_framework.permissions import BasePermission, SAFE_METHODS
+from rest_framework.permissions import BasePermission, SAFE_METHODS # type: ignore
 
 class UnauthenticatedReadonly(BasePermission):
     """
@@ -12,7 +12,7 @@ class UnauthenticatedReadonly(BasePermission):
         return request.user and request.user.is_authenticated
 
     
-    from rest_framework.permissions import BasePermission
+    from rest_framework.permissions import BasePermission # type: ignore
 
 class IsClient(BasePermission):
     def has_permission(self, request, view):
