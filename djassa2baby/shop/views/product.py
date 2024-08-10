@@ -53,6 +53,25 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], url_path='search')
     def search(self, request):
+        """
+        Recherchez des produits en fonction d'un terme de requête.
+
+        Cette méthode permet de rechercher des produits dont le nom contient le terme de recherche fourni dans les paramètres de requête. Elle filtre les résultats en utilisant une recherche insensible à la casse (case-insensitive) sur le nom des boutiques.
+
+        Args:
+            request (Request): L'objet de la requête HTTP contenant les paramètres de requête.
+
+        Query Parameters:
+            q (str): Le terme de recherche utilisé pour filtrer les produits par nom.
+
+        Returns:
+            Response: Un objet Response contenant les produits correspondant au terme de recherche.
+                    En cas d'absence de terme de recherche, retourne une réponse avec un message d'erreur et un code de statut HTTP 400 Bad Request.
+
+        Status Codes:
+            200 OK: Si des boutiques sont trouvées et retournées avec succès.
+            400 Bad Request: Si aucun terme de recherche n'est fourni.
+        """
         query = request.query_params.get('q', None)
         if query:
             products = Product.objects.filter(name__icontains=query)
