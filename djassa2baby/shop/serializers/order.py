@@ -23,7 +23,8 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ['id', 'client', 'delivery_address', 'commune', 'order_date', 'status', 'items', 'total', 'note']
 
-    def get_total(self, obj):
+    @staticmethod
+    def get_total(obj):
         return sum(item.price * item.quantity for item in obj.items.all())
 
     def create(self, validated_data):
@@ -44,7 +45,8 @@ class AnonymousOrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ['id', 'full_name', 'delivery_address', 'commune', 'order_date', 'status', 'items', 'total', 'note']
 
-    def get_total(self, obj):
+    @staticmethod
+    def get_total(obj):
         return sum(item.price * item.quantity for item in obj.items.all())
 
     def create(self, validated_data):

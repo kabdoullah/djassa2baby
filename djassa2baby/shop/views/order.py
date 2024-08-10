@@ -1,12 +1,13 @@
-from rest_framework import viewsets, status
-from rest_framework.response import Response
-from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
-from shop.models.order import Order
-from shop.serializers.order import OrderSerializer, AnonymousOrderSerializer
-from shop.permissions.permission import IsClient, IsSeller
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework import generics
+from rest_framework.response import Response
+
+from shop.models.order import Order
+from shop.permissions.permission import IsClient, IsSeller
+from shop.serializers.order import OrderSerializer, AnonymousOrderSerializer
+
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
@@ -39,13 +40,13 @@ class OrderViewSet(viewsets.ModelViewSet):
         return Response({'error': 'Order cannot be canceled'}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['get'], url_path='client-orders')
-    def client_orders(self, request):
+    def client_orders(self):
         orders = self.get_queryset()
         serializer = self.get_serializer(orders, many=True)
         return Response(serializer.data)
 
     @action(detail=False, methods=['get'], url_path='shop-orders/(?P<shop_id>[^/.]+)')
-    def shop_orders(self, request, shop_id=None):
+    def shop_orders(self, shop_id=None):
         orders = Order.objects.filter(items__shop_id=shop_id).distinct()
         serializer = self.get_serializer(orders, many=True)
         return Response(serializer.data)

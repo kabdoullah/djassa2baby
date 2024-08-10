@@ -1,6 +1,7 @@
 import uuid
+
 from django.db import models
-from shop.models.product import Product
+
 from shop.models.shop import Shop
 from users.models import User
 
