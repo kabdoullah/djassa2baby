@@ -22,13 +22,22 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['id', 'client', 'delivery_address', 'commune', 'phone_number','order_date', 'status', 'items', 'total', 'note']
+
+        #fields = ['id', 'client', 'delivery_address', 'commune', 'phone_number','order_date', 'status', 'items', 'total', 'note']
+
+        fields = ['id', 'client','ref_order', 'delivery_address', 'commune', 'order_date', 'status', 'items', 'total', 'note']
 
     def get_total(self, obj):
         return sum(item.price * item.quantity for item in obj.items.all())
+    
+    def generate_order_number(self):
+        # Exemple de génération de numéro de commande unique
+        from uuid import uuid4
+        return f'ORD-{uuid4().hex[:10].upper()}'
 
     def create(self, validated_data):
         items_data = validated_data.pop('items')
+        validated_data['ref_order'] = self.generate_order_number()
         order = Order.objects.create(**validated_data)
         for item_data in items_data:
             OrderItem.objects.create(order=order, **item_data)
@@ -44,13 +53,24 @@ class AnonymousOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['id', 'full_name', 'delivery_address', 'commune', 'phone_number','order_date', 'status', 'items', 'total', 'note']
+
+        #fields = ['id', 'full_name', 'delivery_address', 'commune', 'phone_number','order_date', 'status', 'items', 'total', 'note']
+
+        fields = ['id','ref_order', 'full_name', 'delivery_address', 'commune','phone_number', 'order_date', 'status', 'items', 'total', 'note']
+
 
     def get_total(self, obj):
         return sum(item.price * item.quantity for item in obj.items.all())
+    
+    def generate_order_number(self):
+        # Exemple de génération de numéro de commande unique
+        from uuid import uuid4
+        return f'ORD-{uuid4().hex[:10].upper()}'
 
     def create(self, validated_data):
         items_data = validated_data.pop('items')
+        # Génération d'un numéro de commande unique
+        validated_data['ref_order'] = self.generate_order_number()
         order = Order.objects.create(**validated_data)
         for item_data in items_data:
             OrderItem.objects.create(order=order, **item_data)
