@@ -66,7 +66,8 @@ class PasswordResetView(APIView):
             if user:
                 token = default_token_generator.make_token(user)
                 uid = urlsafe_base64_encode(force_bytes(user.pk))
-                reset_url = f'{settings.FRONTEND_URL}/reset-password/{uid}/{token}/'
+                # FRONTEND_URL_DEV is the development URL, change to FRONTEND_URL_PROD in production
+                reset_url = f'{settings.FRONTEND_URL_DEV}/auth/reset-password/{uid}/{token}/'
                 Util.send_mail(
                     'Password Reset',
                     f'Use the link below to reset your password:\n{reset_url}',
@@ -74,6 +75,7 @@ class PasswordResetView(APIView):
                     [email]
                 )
             return Response({"message": "If the email is registered, you will receive a reset link."}, status=status.HTTP_200_OK)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
