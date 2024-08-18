@@ -21,7 +21,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['id', 'client','ref_order', 'delivery_address', 'commune', 'order_date', 'status', 'items', 'total', 'note']
+        fields = ['id', 'client','ref_order', 'delivery_address','coupon_code', 'commune', 'order_date', 'status', 'items', 'total', 'note']
 
     def get_total(self, obj):
         return sum(item.price * item.quantity for item in obj.items.all())
@@ -48,7 +48,7 @@ class AnonymousOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['id','ref_order', 'full_name', 'delivery_address', 'commune','phone_number', 'order_date', 'status', 'items', 'total', 'note']
+        fields = ['id','ref_order', 'full_name', 'delivery_address', 'coupon_code','commune','phone_number', 'order_date', 'status', 'items', 'total', 'note']
 
     def get_total(self, obj):
         return sum(item.price * item.quantity for item in obj.items.all())
