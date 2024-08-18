@@ -32,7 +32,9 @@ ALLOWED_HOSTS = ['127.0.0.1','djassa2baby.pythonanywhere.com', 'localhost']
 CORS_ALLOWED_ORIGINS = [
     "https://djassa2baby.pythonanywhere.com",
     "http://localhost:4200",
-    "https://djassa2baby-275ef.web.app"
+      "http://localhost:4000",
+    "https://djassa2baby-275ef.web.app",
+    "https://backoffice-vendor-dev.web.app",
 ]
 
 CORS_ALLOW_HEADERS = [
@@ -47,6 +49,8 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 
+FRONTEND_URL_DEV = "http://localhost:4200"
+FRONTEND_URL_PROD = "https://djassa2baby-275ef.web.app"
 
 CORS_ALLOW_METHODS = [
     "DELETE",

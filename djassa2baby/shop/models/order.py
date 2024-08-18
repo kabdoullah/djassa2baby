@@ -14,6 +14,7 @@ class Order(models.Model):
         ('delivered', 'Livrée'),
     ]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    ref_order = models.CharField(max_length=100)
     client = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     delivery_address = models.CharField(max_length=255)
     commune = models.CharField(max_length=100)

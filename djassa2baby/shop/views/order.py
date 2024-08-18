@@ -55,4 +55,10 @@ class CreateAnonymousOrderView(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = AnonymousOrderSerializer
     permission_classes = [AllowAny]
+
+    @action(detail=False, methods=['get'], url_path='shop-orders/(?P<shop_id>[^/.]+)')
+    def shop_orders(self, request, shop_id=None):
+        orders = Order.objects.filter(items__shop_id=shop_id).distinct()
+        serializer = self.get_serializer(orders, many=True)
+        return Response(serializer.data)
     
