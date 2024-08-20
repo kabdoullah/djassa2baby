@@ -7,15 +7,19 @@ class ShopSerializer(serializers.ModelSerializer):
         model = Shop
         fields = [
             'id', 'name', 'logo', 'email', 'phone_number_1', 'phone_number_2',
-            'description', 'location', 'subscription', 'facebook_link', 
+            'description', 'location', 'facebook_link',
             'whatsapp_link', 'instagram_link', 'twitter_link', 'is_active',
             'can_evaluate', 'date_added', 'user', 'slug'
         ]
         extra_kwargs = {
             'logo': {'required': False, 'allow_null': True},
-            'user': {'required': False, 'allow_null': True},
-            'subscription': {'required': False, 'allow_null': True}
+            'slug': {'read_only': True},
+            'date_added': {'read_only': True},
+            'is_active': {'read_only': True},
+            'can_evaluate': {'read_only': True},
+            'user': {'read_only': True}
         }
+
 
 class ShopReviewSerializer(serializers.ModelSerializer):
     class Meta:

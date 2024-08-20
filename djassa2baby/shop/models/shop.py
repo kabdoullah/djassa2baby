@@ -14,7 +14,6 @@ class Shop(models.Model):
     phone_number_2 = models.CharField(max_length=20, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     location = models.CharField(max_length=255)
-    subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
     facebook_link = models.URLField(blank=True, null=True)
     whatsapp_link = models.URLField(blank=True, null=True)
     instagram_link = models.URLField(blank=True, null=True)

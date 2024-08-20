@@ -11,7 +11,6 @@ from shop.serializers.product import ProductResponseSerializer
 from shop.models.product import Category
 
 
-
 class ShopViewSet(viewsets.ModelViewSet):
     queryset = Shop.objects.all()
     serializer_class = ShopSerializer
@@ -22,11 +21,18 @@ class ShopViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Shop.objects.all()
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
     @action(detail=True, methods=['GET'], url_path="products", url_name="products")
     def list_products(self, request, slug=None):
         shop = self.get_object()
@@ -34,17 +40,8 @@ class ShopViewSet(viewsets.ModelViewSet):
         serializer = ProductResponseSerializer(products, many=True, context=self.get_serializer_context())
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=['get'], url_path='search')
-    def search(self, request):
-        query = request.query_params.get('q', None)
-        if query:
-            shops = Shop.objects.filter(name__icontains=query)
-            serializer = self.get_serializer(shops, many=True)
-            return Response(serializer.data)
-        return Response({'error': 'No query provided'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    
-    @action(detail=False, methods=['GET'], url_path="products/category/(?P<category_slug>[^/.]+)", url_name="products_by_category")
+    @action(detail=False, methods=['GET'], url_path="products/category/(?P<category_slug>[^/.]+)",
+            url_name="products_by_category")
     def list_products_by_category(self, request, category_slug=None, slug=None):
         try:
             category = Category.objects.get(slug=category_slug)
@@ -53,7 +50,7 @@ class ShopViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Category.DoesNotExist:
             return Response({"error": "Category not found in this shop"}, status=status.HTTP_404_NOT_FOUND)
-        
+
     @action(detail=False, methods=['get'], url_path='search')
     def search(self, request):
         """
@@ -81,7 +78,6 @@ class ShopViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(shops, many=True)
             return Response(serializer.data)
         return Response({'error': 'No query provided'}, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class ShopReviewViewSet(viewsets.ModelViewSet):

@@ -1,6 +1,7 @@
 import uuid
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from django.db.models.functions import Concat
 from core.models.role import Role
 
 
@@ -22,9 +23,12 @@ class CustomUserManager(BaseUserManager):
 class User(AbstractUser):
     username = None
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    email = models.EmailField(unique=True)
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
+    email = models.EmailField(unique=True, null=True, blank=True)
+    first_name = models.CharField(max_length=50, null=True, blank=True)
+    last_name = models.CharField(max_length=50, null=True, blank=True)
+    full_name = models.GeneratedField(
+        expression=Concat(models.F('first_name'), models.Value(''), models.F('last_name')),
+        output_field=models.CharField(max_length=100), db_persist=True, null=True, blank=True)
     phone_number = models.CharField(max_length=20, unique=True)
     role = models.ForeignKey(Role, on_delete=models.CASCADE, null=True)
 

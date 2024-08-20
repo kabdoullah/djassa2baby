@@ -137,6 +137,5 @@ class ProductReviewViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = ProductReview.objects.all()
-        serializer = ProductReviewSerializer(
-            queryset, many=True, context=self.get_serializer_context())
+        serializer = ProductReviewSerializer(queryset, many=True, context=self.get_serializer_context())
         return Response(serializer.data, status=status.HTTP_200_OK)

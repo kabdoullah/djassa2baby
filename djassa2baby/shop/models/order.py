@@ -14,16 +14,14 @@ class Order(models.Model):
         ('delivered', 'Livrée'),
     ]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    ref_order = models.CharField(max_length=100)
+    ref_order = models.CharField(max_length=100, blank=True, null=True)
     client = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     delivery_address = models.CharField(max_length=255)
     commune = models.CharField(max_length=100)
     order_date = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(
-        max_length=30, choices=STATUS_CHOICES, default='pending')
-    full_name = models.CharField(max_length=255, null=True, blank=True)
-    address = models.CharField(max_length=255, null=True, blank=True)
+    status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='pending')
     phone_number = models.CharField(max_length=15, null=True, blank=True)
+    total_price = models.DecimalField(max_digits=20, decimal_places=2, default=0)
     note = models.TextField(null=True, blank=True)
 
 
@@ -34,4 +32,3 @@ class OrderItem(models.Model):
     quantity = models.PositiveIntegerField()
     price = models.DecimalField(max_digits=20, decimal_places=2)
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='orders', null=True)
-    
