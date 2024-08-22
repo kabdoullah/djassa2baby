@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 from rest_framework import viewsets,status
 from rest_framework.permissions import IsAuthenticated
+=======
+from rest_framework import viewsets # type: ignore
+from rest_framework.permissions import IsAuthenticated # type: ignore
+>>>>>>> 45721bfca0ba024aebed7ecb3ecd1db79cf852b6
 from core.models.coupon import Coupon
 from core.serializers.coupon import CouponSerializer
 from djassa2baby.shop.models.order import Order
