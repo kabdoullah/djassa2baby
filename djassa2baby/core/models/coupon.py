@@ -14,7 +14,12 @@ class Coupon(models.Model):
     is_active = models.BooleanField(default=True)
 
     def increment_activation(self):
-        """Incrémente le nombre d'activations et désactive le coupon si le maximum est atteint."""
+
+        """
+            Incrémente le nombre d'activations et désactive le coupon si le maximum est atteint.
+        
+        """
+
         if self.nombre_activation < self.max_activation:
             self.nombre_activation += 1
             self.save()
