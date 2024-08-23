@@ -105,8 +105,8 @@ class ShopViewSet(viewsets.ModelViewSet):
             return Response({"error": "Le numéro de téléphone et le mot de passe sont obligatoires."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Créer le compte utilisateur pour le propriétaire de la boutique
-        user = User.objects.create_user(username=username, password=password)
-
+        user = User.objects.create_user(username=username, password=password, email=data.get('email '))
+        
         # Supprimer les clés phone_number_1 et password avant de créer la boutique
         data.pop('phone_number_1', None)
         data.pop('password', None)
