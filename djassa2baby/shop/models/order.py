@@ -1,6 +1,6 @@
 import uuid
 from django.db import models
-from djassa2baby.core.models.coupon import Coupon
+from core.models.coupon import Coupon
 from shop.models.product import Product
 from shop.models.shop import Shop
 from users.models import User
@@ -15,7 +15,7 @@ class Order(models.Model):
     ]
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    ref_order = models.CharField(max_length=100)
+    ref_order = models.CharField(max_length=100, default='ORD-20240824-KZ7LQX')
     client = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     delivery_address = models.CharField(max_length=255)
     coupon_code = models.CharField(max_length=50, null=True, blank=True)

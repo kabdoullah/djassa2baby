@@ -1,5 +1,5 @@
-from djassa2baby.shop.models.campaign import Campaign
-from djassa2baby.shop.models.product import Product
+from shop.models.campaign import Campaign
+from shop.models.product import Product
 from shop.serializers.product import ProductSerializer
 from rest_framework import serializers
 

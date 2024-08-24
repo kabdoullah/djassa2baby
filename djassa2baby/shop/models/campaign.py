@@ -3,7 +3,7 @@ import uuid
 from django.db import models
 from shop.models.shop import Shop
 
-from djassa2baby.shop.models.product import Product
+from shop.models.product import Product
 
 class Campaign(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

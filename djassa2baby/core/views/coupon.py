@@ -3,11 +3,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets # type: ignore
 from core.models.coupon import Coupon
 from core.serializers.coupon import CouponSerializer
-from djassa2baby.shop.models.order import Order
+from shop.models.order import Order
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from djassa2baby.shop.permissions.permission import IsClient, IsSeller, UnauthenticatedReadonly
+from shop.permissions.permission import IsClient, IsSeller, UnauthenticatedReadonly
 
 
 class CouponViewSet(viewsets.ModelViewSet):
