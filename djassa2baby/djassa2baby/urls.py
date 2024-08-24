@@ -35,6 +35,8 @@ urlpatterns = [
     path('api/', include('shop.urls.shop')),
     path('api/', include('shop.urls.order')),
     path('api/', include('shop.urls.subscription')),
+    path('api/', include('shop.urls.subscriber')),
+    path('api/', include('shop.urls.campaign')),
 ]
 
 if settings.DEBUG:

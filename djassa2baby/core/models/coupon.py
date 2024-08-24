@@ -15,6 +15,7 @@ class Coupon(models.Model):
         Shop, on_delete=models.CASCADE, null=True, blank=True, related_name='shop_coupons') # ajout d ela boutique sur le coupon 
     start_date = models.DateField()
     end_date = models.DateField()
+    is_publish = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
     def increment_activation(self):
