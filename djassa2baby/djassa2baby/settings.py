@@ -35,7 +35,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:4000",
     "https://djassa2baby-275ef.web.app",
     "https://backoffice-vendor-dev.web.app",
-    'djassa2baby.onrender.com'
+    'https://djassa2baby.onrender.com'
 ]
 
 CORS_ALLOW_HEADERS = [
