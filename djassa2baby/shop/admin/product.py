@@ -1,5 +1,5 @@
 from django.contrib import admin
-from shop.models.product import Product, Category, ProductReview
+from shop.models.product import Product, Category, ProductReview,ShopCategorie
 
 
 @admin.register(Product)
@@ -22,3 +22,7 @@ class ProductReviewAdmin(admin.ModelAdmin):
     list_display = ['id', 'product', 'user', 'comment', 'rating']
     search_fields = ['product__name', 'user__email']
     list_filter = ['product', 'user', 'rating']
+
+@admin.register(ShopCategorie)
+class ProductReviewAdmin(admin.ModelAdmin):
+    pass

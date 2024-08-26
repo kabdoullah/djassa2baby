@@ -22,6 +22,28 @@ class Category(models.Model):
         return self.name
 
 
+class ShopCategorie(models.Model):
+
+    '''
+        The selected choice of category for the vendor.
+    '''
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    category = models.ForeignKey(
+        Category, on_delete=models.CASCADE, related_name='shop_categorie')
+    shop = models.ForeignKey(
+        Shop, on_delete=models.CASCADE, null=True, blank=True,)
+    
+    is_active = models.BooleanField(default=True)
+    added_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('category', 'shop')
+
+    def __str__(self):
+        return f"{self.category.name} - ({self.shop.name}"
+
+   
+
 class Product(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
