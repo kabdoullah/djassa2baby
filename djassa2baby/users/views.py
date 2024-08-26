@@ -49,6 +49,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             'user': UserSerializer(user).data
         }
 
+        print(UserSerializer(user).data)
         if user.role and user.role.label == 'vendeur':
             shop = Shop.objects.filter(user=user).first()
             if shop:

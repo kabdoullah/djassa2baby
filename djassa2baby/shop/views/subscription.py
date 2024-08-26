@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from rest_framework import permissions
+from shop.permissions.permission import UnauthenticatedReadonly
 from shop.models.subscription import Subscription, SubscriptionHistory
 from shop.serializers.subscription import SubscriptionSerializer, SubscriptionHistorySerializer
 
@@ -7,7 +8,7 @@ from shop.serializers.subscription import SubscriptionSerializer, SubscriptionHi
 class SubscriptionViewSet(viewsets.ModelViewSet):
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [UnauthenticatedReadonly]
 
 
 class SubscriptionHistoryViewSet(viewsets.ModelViewSet):

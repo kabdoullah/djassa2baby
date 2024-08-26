@@ -5,6 +5,7 @@ from shop.models.shop import Shop
 class SubscriberShop(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subscriptions')
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='subscribers')
+    fcm_token = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)  # Indicates if the subscription is currently active
     receive_notifications = models.BooleanField(default=True)  # Opt-in for notifications

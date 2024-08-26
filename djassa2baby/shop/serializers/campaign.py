@@ -12,7 +12,6 @@ class CampaignSerializer(serializers.ModelSerializer):
         model = Campaign
         fields = ['id', 'name', 'campaign_type', 'target_products', 'target_product_ids', 'discount', 'start_date', 'end_date', 'created_at', 'updated_at']
 
-
     def validate(self, data):
         """
         Validate the data before saving

@@ -5,6 +5,7 @@ from rest_framework.viewsets import ModelViewSet
 from shop.models.subscriber import SubscriberShop
 from shop.serializers.subscriber import SubscriberShopSerializer
 from shop.models.shop import Shop
+
 class SubscriberShopViewSet(ModelViewSet):
     queryset = SubscriberShop.objects.all()
     serializer_class = SubscriberShopSerializer
@@ -13,20 +14,24 @@ class SubscriberShopViewSet(ModelViewSet):
     def subscribe(self, request):
         user = request.user
         shop_id = request.data.get('shop_id')
+        fcm_token = request.data.get('fcm_token')
         receive_notifications = request.data.get('receive_notifications', True)
         notification_frequency = request.data.get('notification_frequency', 'instant')
         
         if not shop_id:
             return Response({'detail': 'Shop ID is required.'}, status=status.HTTP_400_BAD_REQUEST)
         
-        shop = Shop.objects.get(id=shop_id)
+        shop = Shop.objects.filter(id=shop_id).first()
+        if not shop:
+            return Response({'detail': 'Shop not found.'}, status=status.HTTP_404_NOT_FOUND)
         
         if SubscriberShop.objects.filter(user=user, shop=shop).exists():
             return Response({'detail': 'Already subscribed to this shop.'}, status=status.HTTP_400_BAD_REQUEST)
         
-        SubscriberShop = SubscriberShop.objects.create(
+        SubscriberShop.objects.create(
             user=user,
             shop=shop,
+            fcm_token=fcm_token,
             receive_notifications=receive_notifications,
             notification_frequency=notification_frequency
         )
@@ -41,13 +46,17 @@ class SubscriberShopViewSet(ModelViewSet):
         if not shop_id:
             return Response({'detail': 'Shop ID is required.'}, status=status.HTTP_400_BAD_REQUEST)
         
-        shop = Shop.objects.get(id=shop_id)
-        SubscriberShop = SubscriberShop.objects.filter(user=user, shop=shop)
+        shop = Shop.objects.filter(id=shop_id).first()
+        if not shop:
+            return Response({'detail': 'Shop not found.'}, status=status.HTTP_404_NOT_FOUND)
         
-        if not SubscriberShop.exists():
+        subscription = SubscriberShop.objects.filter(user=user, shop=shop).first()
+        
+        if not subscription:
             return Response({'detail': 'Not subscribed to this shop.'}, status=status.HTTP_400_BAD_REQUEST)
         
-        SubscriberShop.update(is_active=False)
+        subscription.is_active = False
+        subscription.save()
         return Response({'detail': 'Successfully unsubscribed from the shop.'}, status=status.HTTP_204_NO_CONTENT)
     
     @action(detail=False, methods=['post'], url_path='update-notification-preferences')
@@ -60,13 +69,15 @@ class SubscriberShopViewSet(ModelViewSet):
         if not shop_id:
             return Response({'detail': 'Shop ID is required.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        SubscriberShop = SubscriberShop.objects.filter(user=user, shop__id=shop_id).first()
-        if not SubscriberShop:
-            return Response({'detail': 'SubscriberShop not found.'}, status=status.HTTP_404_NOT_FOUND)
+        subscription = SubscriberShop.objects.filter(user=user, shop_id=shop_id).first()
+        if not subscription:
+            return Response({'detail': 'Subscription not found.'}, status=status.HTTP_404_NOT_FOUND)
 
-        SubscriberShop.receive_notifications = receive_notifications if receive_notifications is not None else SubscriberShop.receive_notifications
-        SubscriberShop.notification_frequency = notification_frequency if notification_frequency else SubscriberShop.notification_frequency
-        SubscriberShop.save()
+        if receive_notifications is not None:
+            subscription.receive_notifications = receive_notifications
+        if notification_frequency:
+            subscription.notification_frequency = notification_frequency
+        subscription.save()
 
         return Response({'detail': 'Notification preferences updated successfully.'}, status=status.HTTP_200_OK)
     

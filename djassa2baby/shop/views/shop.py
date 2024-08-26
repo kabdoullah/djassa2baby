@@ -6,10 +6,10 @@ from django.shortcuts import get_object_or_404
 from shop.permissions.permission import UnauthenticatedReadonly
 from rest_framework.parsers import MultiPartParser, FormParser
 from shop.models.shop import Shop, ShopReview
-from shop.serializers.shop import ShopSerializer, ShopReviewSerializer
+from shop.serializers.shop import ShopSerializer, ShopReviewSerializer, ShopOwnerSerializer
 from shop.serializers.product import ProductResponseSerializer
 from shop.models.product import Category
-from users.models import User
+from users.models import User, Role
 
 
 class ShopViewSet(viewsets.ModelViewSet):
@@ -73,64 +73,7 @@ class ShopViewSet(viewsets.ModelViewSet):
         return Response({'error': 'No query provided'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-    @action(detail=False, methods=['POST'], url_path='create-shop-with-owner', url_name='create-shop-with-owner')
-    def create_shop_with_owner(self, request):
-
-        """
-        Crée une nouvelle boutique.
-
-        Cette méthode permet de créer une nouvelle instance de Shop en utilisant les données fournies dans la requête.
-        Elle valide les données à l'aide du ShopSerializer avant de sauvegarder la nouvelle boutique dans la base de données.
-
-        Args:
-            request (Request): L'objet de la requête HTTP contenant les données pour créer une nouvelle boutique.
-
-        Returns:
-            Response: Un objet Response contenant les données de la nouvelle boutique créée.
-
-        Status Codes:
-            201 Created: Si la boutique est créée avec succès.
-            400 Bad Request: Si les données fournies sont invalides.
-        """
-
-        
-        data = request.data.copy()  # Create a copy of the request data to modify it
-
-        # Récupérer le numéro de téléphone et le mot de passe pour créer un compte utilisateur pour le propriétaire de la boutique
-        username = data.get('phone_number_1')
-        password = data.get('password')
-
-        # Vérifier si le numéro de téléphone et le mot de passe sont fournis
-        if not username or not password:
-            return Response({"error": "Le numéro de téléphone et le mot de passe sont obligatoires."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Créer le compte utilisateur pour le propriétaire de la boutique
-        user = User.objects.create_user(username=username, password=password, email=data.get('email '))
-        
-        # Supprimer les clés phone_number_1 et password avant de créer la boutique
-        data.pop('phone_number_1', None)
-        data.pop('password', None)
-
-        # Ajouter l'ID de l'utilisateur à la donnée pour créer la boutique
-        data['user'] = user.id
-
-        # Valider et enregistrer la boutique
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def perform_create(self, serializer):
-        """
-        Effectue la sauvegarde de la nouvelle boutique dans la base de données.
-        
-        Cette méthode peut être surchargée pour personnaliser la façon dont les boutiques sont créées et sauvegardées.
-
-        Args:
-            serializer (Serializer): L'instance du serializer contenant les données validées.
-        """
-        serializer.save()
+    
 
 
 
@@ -139,3 +82,48 @@ class ShopReviewViewSet(viewsets.ModelViewSet):
     queryset = ShopReview.objects.all()
     serializer_class = ShopReviewSerializer
     permission_classes = [UnauthenticatedReadonly]
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from drf_yasg.utils import swagger_auto_schema
+class CreateShopWithOwnerAPIView(APIView):
+    """
+    API view to create a new shop along with the shop owner.
+    """
+
+    # permission_classes = [UnauthenticatedReadonly]
+    serializer_class = ShopOwnerSerializer
+    @swagger_auto_schema(request_body=ShopOwnerSerializer, responses={201: ShopOwnerSerializer})
+    def post(self, request, *args, **kwargs):
+        """
+        Handles POST request to create shop with owner.
+        
+        Args:
+            request (Request): The HTTP request object containing the data to create a new shop and owner.
+        
+        Returns:
+            Response: A Response object containing the data of the newly created shop and owner.
+        
+        Status Codes:
+            201 Created: If the shop and owner are successfully created.
+            400 Bad Request: If the provided data is invalid.
+        """
+
+        data = request.data  # Create a copy of the request data to modify it
+        # Récupérer le numéro de téléphone et le mot de passe pour créer un compte utilisateur pour le propriétaire de la boutique
+        username = data.get('phone_number_1')
+        password = data.get('password')
+        # Vérifier si le numéro de téléphone et le mot de passe sont fournis
+        if not username or not password:
+            return Response({"error": "Le numéro de téléphone et le mot de passe sont obligatoires."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Use ShopOwnerSerializer to validate and process the modified data
+        serializer = ShopOwnerSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    
