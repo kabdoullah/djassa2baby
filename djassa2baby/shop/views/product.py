@@ -1,3 +1,4 @@
+from shop.models.shop import Shop
 from rest_framework import viewsets
 from django.db.models import Count
 from rest_framework.response import Response
@@ -5,12 +6,12 @@ from rest_framework.decorators import action
 from rest_framework import status
 from shop.permissions.permission import UnauthenticatedReadonly
 from rest_framework.parsers import MultiPartParser, FormParser
-from shop.models.product import Product, Category, ProductReview
+from shop.models.product import Product, Category, ProductReview, ShopCategorie
 from shop.serializers.product import (ProductSerializer,
                                       CategorySerializer,
                                       ProductReviewSerializer,
                                       ProductResponseSerializer,
-                                      ProductReviewCreateSerializer
+                                      ProductReviewCreateSerializer, ShopCategorieSerializer
                                       )
 
 
@@ -140,3 +141,23 @@ class ProductReviewViewSet(viewsets.ModelViewSet):
         serializer = ProductReviewSerializer(
             queryset, many=True, context=self.get_serializer_context())
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ShopCategorieViewSet(viewsets.ModelViewSet):
+    queryset = ShopCategorie.objects.all()
+    serializer_class = ShopCategorieSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        shop_id = self.request.query_params.get('shop_id')
+        if shop_id:
+            queryset = queryset.filter(shop__id=shop_id)
+        return queryset
+    
+
+    @action(detail=False, methods=['get'], url_path='list-categorie/(?P<shop_id>[^/.]+)')
+    def shop_categorie(self, request, shop_id=None):
+        shop_categories = ShopCategorie.objects.filter(shop_id=shop_id)
+        serializer = self.get_serializer(shop_categories, many=True)
+        return Response(serializer.data)
+    

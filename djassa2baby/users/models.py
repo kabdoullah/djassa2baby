@@ -27,11 +27,12 @@ class User(AbstractUser):
     last_name = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=20, unique=True)
     role = models.ForeignKey(Role, on_delete=models.CASCADE, null=True)
+    delivery_adresse = models.CharField(max_length=50,null=True, blank=True)
 
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'phone_number'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ["email"]
 
     def __str__(self):
         return self.email
