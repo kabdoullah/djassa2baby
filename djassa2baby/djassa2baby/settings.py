@@ -160,7 +160,16 @@ DATABASES = {
     }
 }
 
-
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'bd_babyshop',  # Replace with your actual database name
+#         'USER': 'corneille',  # Replace with your actual database user
+#         'PASSWORD': 'QUzfLXuz7LsO6LLkQJ4wJoEc1m4wuq1v',   # Replace with your actual database password
+#         'HOST': 'dpg-cr6gd223esus73f3h5v0-a',           # Set to 'localhost' if running locally, otherwise provide the actual host
+#         'PORT': '5432',                # Default PostgreSQL port is 5432
+#     }
+# }
 
 
 
