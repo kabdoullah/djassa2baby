@@ -4,7 +4,7 @@ from shop.models.product import Category, ShopCategorie
 from shop.models.subscription import Subscription
 from users.models import User
 from shop.models.shop import Shop, ShopReview
-
+import ast
 
 class ShopSerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,7 +44,7 @@ class ShopOwnerSerializer(serializers.Serializer):
     whatsapp_link = serializers.URLField(required=False, allow_null=True)
     instagram_link = serializers.URLField(required=False, allow_null=True)
     twitter_link = serializers.URLField(required=False, allow_null=True)
-    categories = serializers.ListField(child=serializers.CharField(), required=False, allow_null=True)  # New field
+    categories = serializers.ListField(child=serializers.UUIDField(), required=False, allow_null=True)  # New field
 
     def create(self, validated_data):
         # Extract password and handle user creation separately
@@ -66,8 +66,9 @@ class ShopOwnerSerializer(serializers.Serializer):
         validated_data['subscription'] = subscription
         shop = Shop.objects.create(**validated_data)
 
+        liste_uuids = ast.literal_eval(categories)
         # Handle categories
-        for categorie_id in categories:
+        for categorie_id in liste_uuids:
             category = Category.objects.get(id=categorie_id)
             ShopCategorie.objects.create(
                 shop=shop,
