@@ -54,10 +54,6 @@ class AnonymousOrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ['id','ref_order', 'full_name', 'delivery_address', 'coupon_code','commune','phone_number', 'order_date', 'status', 'items', 'total', 'note']
 
-        #fields = ['id', 'full_name', 'delivery_address', 'commune', 'phone_number','order_date', 'status', 'items', 'total', 'note']
-
-        #fields = ['id','ref_order', 'full_name', 'delivery_address', 'commune','phone_number', 'order_date', 'status', 'items', 'total', 'note']
-
 
     def get_total(self, obj):
         return sum(item.price * item.quantity for item in obj.items.all())

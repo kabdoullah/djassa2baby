@@ -16,3 +16,4 @@ tzdata==2024.1
 uritemplate==4.1.1
 gunicorn
 firebase-admin
+psycopg2

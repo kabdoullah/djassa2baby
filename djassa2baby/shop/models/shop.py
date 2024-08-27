@@ -1,8 +1,10 @@
 import uuid
 from django.db import models
-from users.models import User
 from shop.models.subscription import Subscription
 from django.utils.text import slugify
+# from django.contrib.auth import get_user_model
+
+# User = get_user_model()
 
 
 class Shop(models.Model):
@@ -22,7 +24,7 @@ class Shop(models.Model):
     is_active = models.BooleanField(default=True)
     can_evaluate = models.BooleanField(default=True)
     date_added = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
     slug = models.SlugField(unique=True, max_length=255, null=True, blank=True)
 
     def save(self, *args, **kwargs):
@@ -35,6 +37,6 @@ class Shop(models.Model):
 class ShopReview(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
     comment = models.TextField(blank=True, null=True)
     rating = models.IntegerField()

@@ -3,7 +3,6 @@ from django.db import models
 
 from shop.models.shop import Shop
 
-
 class Coupon(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     coupon_code = models.CharField(max_length=50)

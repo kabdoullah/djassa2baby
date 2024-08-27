@@ -27,4 +27,4 @@ class SubscriberShop(models.Model):
         unique_together = ('user', 'shop')  # Prevents duplicate subscriptions
 
     def __str__(self):
-        return f"{self.user.username} subscribed to {self.shop.name} on {self.created_at.date()}"
+        return f"{self.user.first_name} subscribed to {self.shop.name} on {self.created_at.date()}"
