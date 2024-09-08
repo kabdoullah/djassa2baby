@@ -60,11 +60,10 @@ class ShopViewSet(viewsets.ModelViewSet):
 
         Args:
             request (Request): L'objet de la requête HTTP contenant les paramètres de requête.
-
         Query Parameters:
             q (str): Le terme de recherche utilisé pour filtrer les boutiques par nom.
 
-        Returns:
+        Return:
             Response: Un objet Response contenant les boutiques correspondant au terme de recherche. 
                     En cas d'absence de terme de recherche, retourne une réponse avec un message d'erreur et un code de statut HTTP 400 Bad Request.
                     

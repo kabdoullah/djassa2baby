@@ -1,7 +1,6 @@
 import uuid
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
-from django.db.models.functions import Concat
 from core.models.role import Role
 
 
@@ -19,15 +18,23 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault('is_superuser', True)
         return self.create_user(phone_number, password, **extra_fields)
 
+class ConcatOp(models.Func):
+    arg_joiner = " || "
+    function = None
+    output_field = models.TextField()
+    template = "%(expressions)s"
 
 class User(AbstractUser):
+    # class Meta:
+    #     db_table = 'custom_user'
+
     username = None
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(unique=True, null=True, blank=True)
     first_name = models.CharField(max_length=50, null=True, blank=True)
     last_name = models.CharField(max_length=50, null=True, blank=True)
     full_name = models.GeneratedField(
-        expression=Concat(models.F('first_name'), models.Value(''), models.F('last_name')),
+        expression=ConcatOp('first_name', models.Value(''),'last_name'),
         output_field=models.CharField(max_length=100), db_persist=True, null=True, blank=True)
     phone_number = models.CharField(max_length=20, unique=True)
     role = models.ForeignKey(Role, on_delete=models.CASCADE, null=True)
@@ -38,4 +45,4 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
 
     def __str__(self):
-        return self.email
+        return self.full_name
