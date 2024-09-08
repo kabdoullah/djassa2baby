@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-zw(^p4_0wup_5x92%4)5(1yh71@1p&64$4idnf0@(-t@j^!bx2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'djassa2baby.pythonanywhere.com', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'djassa2baby.pythonanywhere.com', 'localhost', 'djassa2baby-vzlv.onrender.com']
 
 CORS_ALLOWED_ORIGINS = [
     "https://djassa2baby.pythonanywhere.com",
