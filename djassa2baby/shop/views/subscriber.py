@@ -94,3 +94,12 @@ class SubscriberShopViewSet(ModelViewSet):
         subscribers = SubscriberShop.objects.filter(shop=shop, is_active=True)
         serializer = self.get_serializer(subscribers, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+    @action(detail=False, methods=['get'], url_path='list-subscribers/(?P<shop_id>[^/.]+)')
+    def shop_subscribers(self, request, shop_id=None):
+
+        shop_subscribers = SubscriberShop.objects.filter(shop=shop_id)
+        serializer = self.get_serializer(shop_subscribers, many=True)
+        return Response(serializer.data)
+    

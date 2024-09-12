@@ -6,7 +6,7 @@ from users.models import User
 from shop.models.shop import Shop, ShopReview
 import ast
 from django.db import transaction, IntegrityError
-import json
+
 class ShopSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shop

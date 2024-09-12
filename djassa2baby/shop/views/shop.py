@@ -73,10 +73,6 @@ class ShopViewSet(viewsets.ModelViewSet):
         return Response({'error': 'No query provided'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-    
-
-
-
 
 class ShopReviewViewSet(viewsets.ModelViewSet):
     queryset = ShopReview.objects.all()
@@ -85,11 +81,10 @@ class ShopReviewViewSet(viewsets.ModelViewSet):
 
 
 from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
 
 class CreateShopWithOwnerAPIView(APIView):
+    
     """
     API view to create a new shop along with the shop owner.
     """
@@ -98,6 +93,7 @@ class CreateShopWithOwnerAPIView(APIView):
     serializer_class = ShopOwnerSerializer
     @swagger_auto_schema(request_body=ShopOwnerSerializer, responses={201: ShopOwnerSerializer})
     def post(self, request, *args, **kwargs):
+
         """
         Handles POST request to create shop with owner.
         
