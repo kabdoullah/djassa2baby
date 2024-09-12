@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from core.models.role import Role
+from users.utils import send_otp_email
+from shop.models.otp import OtpCode
 from shop.models.product import Category, ShopCategorie
 from shop.models.subscription import Subscription
 from users.models import User
@@ -16,6 +18,7 @@ class ShopSerializer(serializers.ModelSerializer):
             'whatsapp_link', 'instagram_link', 'twitter_link', 'is_active',
             'can_evaluate', 'date_added', 'user', 'slug'
         ]
+        
         extra_kwargs = {
             'logo': {'required': False, 'allow_null': True},
             'slug': {'read_only': True},
@@ -32,7 +35,19 @@ class ShopReviewSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+import random
+
+
+def generate_otp():
+
+    """Génère un code OTP à 6 chiffres."""
+    
+    return str(random.randint(100000, 999999))
+
+
+
 class ShopOwnerSerializer(serializers.Serializer):
+
     """
     Serializer for creating a shop with an owner.
     """
@@ -73,6 +88,14 @@ class ShopOwnerSerializer(serializers.Serializer):
                 validated_data['user'] = user
                 validated_data['subscription'] = subscription
                 shop = Shop.objects.create(**validated_data)
+                
+                #create otp to verify the store account 
+                otp = OtpCode(
+                    otp = generate_otp(),
+                    shop = shop,
+                )
+
+                otp.save()
                 # Convert the categories string back to a list of UUIDs
                 liste_uuids = ast.literal_eval(categories)
                 # Handle categories
@@ -82,6 +105,9 @@ class ShopOwnerSerializer(serializers.Serializer):
                         shop=shop,
                         category=category
                     )
+
+                # Envoi de l'email
+                send_otp_email(shop, otp.otp)
 
                 return shop
 
