@@ -17,3 +17,4 @@ uritemplate==4.1.1
 gunicorn
 firebase-admin
 psycopg2
+whitenoise==6.7.0

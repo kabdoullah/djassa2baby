@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 from datetime import timedelta
 from decouple import config
@@ -84,6 +85,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -153,25 +155,31 @@ SWAGGER_SETTINGS = {
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'bd_babyshop',  # Replace with your actual database name
-        'USER': 'corneille',  # Replace with your actual database user
-        'PASSWORD': 'QUzfLXuz7LsO6LLkQJ4wJoEc1m4wuq1v',  # Replace with your actual database password
-        'HOST': 'dpg-cr6gd223esus73f3h5v0-a.oregon-postgres.render.com',  # Only the hostname or IP address
-        'PORT': '5432',  # Default PostgreSQL port is 5432
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'bd_babyshop',  # Replace with your actual database name
+#         'USER': 'corneille',  # Replace with your actual database user
+#         'PASSWORD': 'QUzfLXuz7LsO6LLkQJ4wJoEc1m4wuq1v',  # Replace with your actual database password
+#         'HOST': 'dpg-cr6gd223esus73f3h5v0-a.oregon-postgres.render.com',  # Only the hostname or IP address
+#         'PORT': '5432',  # Default PostgreSQL port is 5432
+#     }
+# }
 
+
+# This production code might break development mode, so we check whether we're in DEBUG mode
+if not DEBUG:    # Tell Django to copy static assets into a path called `staticfiles` (this is specific to Render)
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    # Enable the WhiteNoise storage backend, which compresses static files to reduce disk use
+    # and renames the files with unique names for each version to support long-term caching
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 # Password validation
