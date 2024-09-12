@@ -1,7 +1,12 @@
 import uuid
+
 from django.db import models
+<<<<<<< HEAD
 from core.models.coupon import Coupon
 from shop.models.product import Product
+=======
+
+>>>>>>> 9a3759cac4f1c7f7ad2d8594f681cc397deb39e6
 from shop.models.shop import Shop
 from users.models import User
 
@@ -15,17 +20,19 @@ class Order(models.Model):
     ]
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+<<<<<<< HEAD
     ref_order = models.CharField(max_length=100, default='ORD-20240824-KZ7LQX')
+=======
+    ref_order = models.CharField(max_length=100, blank=True, null=True)
+>>>>>>> 9a3759cac4f1c7f7ad2d8594f681cc397deb39e6
     client = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     delivery_address = models.CharField(max_length=255)
     coupon_code = models.CharField(max_length=50, null=True, blank=True)
     commune = models.CharField(max_length=100)
     order_date = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(
-        max_length=30, choices=STATUS_CHOICES, default='pending')
-    full_name = models.CharField(max_length=255, null=True, blank=True)
-    address = models.CharField(max_length=255, null=True, blank=True)
+    status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='pending')
     phone_number = models.CharField(max_length=15, null=True, blank=True)
+    total_price = models.DecimalField(max_digits=20, decimal_places=2, default=0)
     note = models.TextField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
@@ -52,4 +59,3 @@ class OrderItem(models.Model):
     quantity = models.PositiveIntegerField()
     price = models.DecimalField(max_digits=20, decimal_places=2)
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE, related_name='orders', null=True)
-    

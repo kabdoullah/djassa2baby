@@ -11,7 +11,6 @@ from shop.serializers.product import ProductResponseSerializer
 from shop.models.product import Category
 from users.models import User, Role
 
-
 class ShopViewSet(viewsets.ModelViewSet):
     queryset = Shop.objects.all()
     serializer_class = ShopSerializer
@@ -22,11 +21,18 @@ class ShopViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Shop.objects.all()
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
     @action(detail=True, methods=['GET'], url_path="products", url_name="products")
     def list_products(self, request, slug=None):
         shop = self.get_object()
@@ -34,7 +40,12 @@ class ShopViewSet(viewsets.ModelViewSet):
         serializer = ProductResponseSerializer(products, many=True, context=self.get_serializer_context())
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+<<<<<<< HEAD
     @action(detail=False, methods=['GET'], url_path="products/category/(?P<category_slug>[^/.]+)", url_name="products_by_category")
+=======
+    @action(detail=False, methods=['GET'], url_path="products/category/(?P<category_slug>[^/.]+)",
+            url_name="products_by_category")
+>>>>>>> 9a3759cac4f1c7f7ad2d8594f681cc397deb39e6
     def list_products_by_category(self, request, category_slug=None, slug=None):
         try:
             category = Category.objects.get(slug=category_slug)
@@ -53,11 +64,10 @@ class ShopViewSet(viewsets.ModelViewSet):
 
         Args:
             request (Request): L'objet de la requête HTTP contenant les paramètres de requête.
-
         Query Parameters:
             q (str): Le terme de recherche utilisé pour filtrer les boutiques par nom.
 
-        Returns:
+        Return:
             Response: Un objet Response contenant les boutiques correspondant au terme de recherche. 
                     En cas d'absence de terme de recherche, retourne une réponse avec un message d'erreur et un code de statut HTTP 400 Bad Request.
                     
@@ -73,11 +83,14 @@ class ShopViewSet(viewsets.ModelViewSet):
         return Response({'error': 'No query provided'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+<<<<<<< HEAD
     
 
 
 
 
+=======
+>>>>>>> 9a3759cac4f1c7f7ad2d8594f681cc397deb39e6
 class ShopReviewViewSet(viewsets.ModelViewSet):
     queryset = ShopReview.objects.all()
     serializer_class = ShopReviewSerializer
