@@ -21,7 +21,7 @@ class Shop(models.Model):
     whatsapp_link = models.URLField(blank=True, null=True)
     instagram_link = models.URLField(blank=True, null=True)
     twitter_link = models.URLField(blank=True, null=True)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     can_evaluate = models.BooleanField(default=True)
     date_added = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)

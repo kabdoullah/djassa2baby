@@ -1,3 +1,4 @@
+from datetime import timedelta
 from rest_framework import serializers
 from core.models.role import Role
 from users.utils import send_otp_email
@@ -8,12 +9,14 @@ from users.models import User
 from shop.models.shop import Shop, ShopReview
 import ast
 from django.db import transaction, IntegrityError
+from django.utils import timezone
+
 
 class ShopSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shop
         fields = [
-            'id', 'name', 'logo', 'email', 'phone_number_1', 'phone_number_2',
+            'id', 'name', 'logo', 'email', 'phone_number_1', 'subscription', 'phone_number_2',
             'description', 'location', 'facebook_link',
             'whatsapp_link', 'instagram_link', 'twitter_link', 'is_active',
             'can_evaluate', 'date_added', 'user', 'slug'
@@ -25,7 +28,8 @@ class ShopSerializer(serializers.ModelSerializer):
             'date_added': {'read_only': True},
             'is_active': {'read_only': True},
             'can_evaluate': {'read_only': True},
-            'user': {'read_only': True}
+            'user': {'read_only': True},
+            'subscription': {'read_only': True}
         }
 
 
@@ -49,8 +53,9 @@ def generate_otp():
 class ShopOwnerSerializer(serializers.Serializer):
 
     """
-    Serializer for creating a shop with an owner.
+        Serializer for creating a shop with an owner.
     """
+    id = serializers.UUIDField(required=False, allow_null=True)
     name = serializers.CharField(max_length=255)
     logo = serializers.ImageField(required=True)
     email = serializers.EmailField()
@@ -88,13 +93,16 @@ class ShopOwnerSerializer(serializers.Serializer):
                 validated_data['user'] = user
                 validated_data['subscription'] = subscription
                 shop = Shop.objects.create(**validated_data)
-                
+                shop.is_active = False
+                shop.save()
                 #create otp to verify the store account 
                 otp = OtpCode(
                     otp = generate_otp(),
                     shop = shop,
+                    expires_at  = timezone.now()  + timedelta(minutes=15)
                 )
 
+                print(otp.otp)
                 otp.save()
                 # Convert the categories string back to a list of UUIDs
                 liste_uuids = ast.literal_eval(categories)
@@ -107,7 +115,7 @@ class ShopOwnerSerializer(serializers.Serializer):
                     )
 
                 # Envoi de l'email
-                send_otp_email(shop, otp.otp)
+                #send_otp_email(shop, otp.otp)
 
                 return shop
 
